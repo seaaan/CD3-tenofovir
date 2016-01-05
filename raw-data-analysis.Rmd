@@ -86,7 +86,8 @@ PLOTS OF NORMALIZED DATA
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
 plot(QNTB.complete.RAW.lumi)
 
-plot(QNTB.complete.RAW.lumi, what='sampleRelation',method="mds")
+plot(QNTB.complete.RAW.lumi, what='sampleRelation', method="mds", 
+   col = pData$Donor)
 
 boxplot(QNTB.complete.RAW.lumi)
 
