@@ -1,0 +1,209 @@
+---
+title: Exposure of CD3 T cells to tenofovir
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+library(dplyr)
+library(lumi)
+library(limma)
+
+file <- "data/GenomeStudioProject/2015.12.29.smhughesFinalReport.txt"
+
+rawData <- lumiR(file, detectionTh = 0.05, convertNuID = FALSE, 
+   checkDupId = FALSE, columnNameGrepPattern = list(exprs = 'AVG_SIGNAL',
+      se.exprs = 'BEAD_STDERR', detection = 'Detection Pval',
+      beadNum = 'Avg_NBEADS'),
+   annotationColumn = c('ILMN_GENE', 'ENTREZ_GENE_ID', 'GI',
+      'ACCESSION', 'SYMBOL', 'PROBE_ID', 'PROBE_START', 'PROBE_SEQUENCE',
+      'CHROMOSOME', 'PROBE_CHR_ORIENTATION', 'PROBE_COORDINATES'))
+```
+
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+# Create the phenotypic data information --------------------------------
+
+pData <- data.frame(Names = colnames(rawData))
+
+pData$Donor <- rep(LETTERS[1:3], each = 4)
+pData$Concentration <- rep(c(0, 5, 50, 500), times = 3)
+rownames(pData) <- pData$Names
+pData <- select(pData, -Names)
+
+#create metadata df
+metadata <- data.frame(
+   labelDescription = c("Blood donor", "Concentration of tenofovir"),
+   row.names = c("Donor", "Concentration"))
+
+#combine metadata and pdata into an annotated df
+adf <- new("AnnotatedDataFrame",data = pData, varMetadata = metadata)
+
+#create experiment data
+experimentData <- new("MIAME", name="Sean Hughes", lab = "Florian Hladik Lab",
+   title = "CD3 tenofovir exposure")
+
+#make a lumiBatch that contains both the raw data we got from
+#shared resources AND the phenoData, metadata and experiment data
+#that I created
+
+annotatedData <- new("LumiBatch", exprs=exprs(rawData), phenoData = adf,
+                  experimentData = experimentData,
+                  se.exprs = se.exprs(rawData),
+                  detection = detection(rawData))
+
+```
+
+ SOME PLOTS OF NON NORMALIZED DATA:
+ density plot, cdf plot
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+#density plot
+density(annotatedData)#number of probes for each sample that occur
+#at a certain log2 intensity
+
+#CDF plot: cumulative probability of having <= a certain log2 intensity
+plotCDF(annotatedData)
+
+#sample relations
+plot(annotatedData, what='sampleRelation',method="mds")
+
+#boxplot
+boxplot(annotatedData)
+
+###################BACKGROUND CORRECTION ####################
+#the data we got from the core had no background correction so I will do it here
+
+QNTB.complete.RAW.lumi <- annotatedData %>% 
+   lumiB() %>% 
+   lumiT() %>% 
+   lumiN(method = "rsn") %>% 
+   lumiQ(detectionTh = 0.05)
+
+```
+PLOTS OF NORMALIZED DATA 
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+plot(QNTB.complete.RAW.lumi)
+
+plot(QNTB.complete.RAW.lumi, what='sampleRelation',method="mds")
+
+boxplot(QNTB.complete.RAW.lumi)
+
+```
+FILTERING PROBES BASED ON DETECTION 
+ Limma suggests to keep probes that are expressed above bg on 
+at least n arrays where n is smallest number of replicates assigned
+to any of the treatment combinations.
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+#this is how the detection filtering works
+#Mark the detection pvalues (there is one per probe per sample) with a 1 if <0.05 or a 0 if >0.05
+# using (detection(QNTB.complete.RAW.lumi)<0.05)
+
+#add up the 0's and 1's across each row (i.e. for all the samples)
+#using rowSums
+
+#now you have the number of detection p values <0.05 for each probe
+#for all the samples (max possible = total samples)
+
+#now tell me which probes have a rowSum of >=7 (probes will be marked as TRUE
+# or false if they do or do not have >=7 rowSum)
+            
+detectedProbes <- rowSums(detection(QNTB.complete.RAW.lumi)<0.05)>=4
+
+#now extract just those probes that are TRUE from the lumibatch
+
+expressedProbes.lumi <-QNTB.complete.RAW.lumi[detectedProbes,]
+```
+
+how many probes did we have before and after filtering?
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+dims(QNTB.complete.RAW.lumi)#47323
+
+dims(expressedProbes.lumi)#21726
+```
+how many removed?
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+dims(QNTB.complete.RAW.lumi)-dims(expressedProbes.lumi)#20192
+
+```
+Here's the design matrix for the analysis
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+############### TARGETS AND DESIGN MATRIX ###################
+# see section 9.4.1 and 9.4.2 in the limma users guide
+
+targets <- pData(expressedProbes.lumi)
+donor <- factor(targets$Donor)
+concentration <- factor(targets$Concentration)
+
+design <- model.matrix (~ 0 + concentration + donor)
+design
+```
+Here's the contrasts matrix
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+####################### FIT MODEL TO PROBES ###################
+fit <- lmFit(expressedProbes.lumi, design = design)
+
+#Now we can make any comparisons
+#between the experimental conditions
+
+# If topTable is called and coef has two or more elements,
+# then the specified columns will be extracted from fit and
+# topTableF called on the result. topTable with coef=NULL is 
+# the same as topTableF, unless the fitted model fit has only
+# one column.
+
+bothcm <- makeContrasts(
+   MaxVsCtrl = concentration500 - concentration0, 
+   MidVsCtrl = concentration50 - concentration0, 
+   MinVsCtrl = concentration5 - concentration0,
+   levels=design
+)
+bothcm
+
+#fit the contrasts  
+fit2 <- contrasts.fit(fit, bothcm)
+
+#compute diff exprsn
+fit2 <- eBayes(fit2)
+```
+
+How many probes are up and down regulated for each contrast?
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+
+#method=separate is same as doing topTable for all coefs separately
+results <- decideTests(fit2, method="separate", adjust.method="BH",
+                      p.value = 0.05, lfc = 0.5)
+
+#turn the results matrix into a data frame and make the
+#probeID a real column and remove the rownames
+
+resultsDF<-as.data.frame(results)
+resultsDF$ProbeID<-rownames(resultsDF)
+rownames(resultsDF)<-NULL
+
+#melt the df for easy summarizing
+library(reshape2)
+
+resultsDFmelt<-melt(resultsDF, id.vars="ProbeID")
+
+#number of up and down regulated probes based on 
+#p.val at least 0.05 and lfc at least 0.5
+
+summary<-resultsDFmelt %>%
+  group_by(variable)%>%
+ summarize(down=sum(value=="-1"),up=sum(value=="1"))
+summary
+
+```
+
+
+SessionInfo()
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+sessionInfo()
+```
