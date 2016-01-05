@@ -98,18 +98,17 @@ at least n arrays where n is smallest number of replicates assigned
 to any of the treatment combinations.
 
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
-#this is how the detection filtering works
-#Mark the detection pvalues (there is one per probe per sample) with a 1 if <0.05 or a 0 if >0.05
-# using (detection(QNTB.complete.RAW.lumi)<0.05)
+# this is how the detection filtering works
+# Mark the detection pvalues (there is one per probe per sample) with
+# a 1 if <0.05 or a 0 if >0.05 using 
+# (detection(QNTB.complete.RAW.lumi)<0.05)
 
-#add up the 0's and 1's across each row (i.e. for all the samples)
-#using rowSums
+# add up the 0's and 1's across each row (i.e. for all the samples)
+# using rowSums. Now you have the number of detection p values <0.05 for 
+# each probe for all the samples (max possible = total samples)
 
-#now you have the number of detection p values <0.05 for each probe
-#for all the samples (max possible = total samples)
-
-#now tell me which probes have a rowSum of >=7 (probes will be marked as TRUE
-# or false if they do or do not have >=7 rowSum)
+# now tell me which probes have a rowSum of >=4 (probes will be marked as
+# true or false if they do or do not have >=4 rowSum)
             
 detectedProbes <- rowSums(detection(QNTB.complete.RAW.lumi)<0.05)>=4
 
@@ -120,13 +119,13 @@ expressedProbes.lumi <-QNTB.complete.RAW.lumi[detectedProbes,]
 
 how many probes did we have before and after filtering?
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
-dims(QNTB.complete.RAW.lumi)#47323
+dims(QNTB.complete.RAW.lumi)
 
-dims(expressedProbes.lumi)#21726
+dims(expressedProbes.lumi)
 ```
 how many removed?
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
-dims(QNTB.complete.RAW.lumi)-dims(expressedProbes.lumi)#20192
+dims(QNTB.complete.RAW.lumi)-dims(expressedProbes.lumi)
 
 ```
 Here's the design matrix for the analysis

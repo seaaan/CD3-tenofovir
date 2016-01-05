@@ -4,31 +4,31 @@
 SOME PLOTS OF NON NORMALIZED DATA: density plot, cdf plot ![](raw-data-analysis_files/figure-markdown_github/unnamed-chunk-3-1.png) ![](raw-data-analysis_files/figure-markdown_github/unnamed-chunk-3-2.png) ![](raw-data-analysis_files/figure-markdown_github/unnamed-chunk-3-3.png) ![](raw-data-analysis_files/figure-markdown_github/unnamed-chunk-3-4.png)
 
     ## Perform vst transformation ...
-    ## 2016-01-05 10:57:31 , processing array  1 
-    ## 2016-01-05 10:57:32 , processing array  2 
-    ## 2016-01-05 10:57:32 , processing array  3 
-    ## 2016-01-05 10:57:32 , processing array  4 
-    ## 2016-01-05 10:57:32 , processing array  5 
-    ## 2016-01-05 10:57:32 , processing array  6 
-    ## 2016-01-05 10:57:32 , processing array  7 
-    ## 2016-01-05 10:57:32 , processing array  8 
-    ## 2016-01-05 10:57:32 , processing array  9 
-    ## 2016-01-05 10:57:32 , processing array  10 
-    ## 2016-01-05 10:57:32 , processing array  11 
-    ## 2016-01-05 10:57:32 , processing array  12 
+    ## 2016-01-05 11:03:48 , processing array  1 
+    ## 2016-01-05 11:03:48 , processing array  2 
+    ## 2016-01-05 11:03:48 , processing array  3 
+    ## 2016-01-05 11:03:48 , processing array  4 
+    ## 2016-01-05 11:03:48 , processing array  5 
+    ## 2016-01-05 11:03:48 , processing array  6 
+    ## 2016-01-05 11:03:48 , processing array  7 
+    ## 2016-01-05 11:03:48 , processing array  8 
+    ## 2016-01-05 11:03:48 , processing array  9 
+    ## 2016-01-05 11:03:48 , processing array  10 
+    ## 2016-01-05 11:03:48 , processing array  11 
+    ## 2016-01-05 11:03:48 , processing array  12 
     ## Perform rsn normalization ...
-    ## 2016-01-05 10:57:33 , processing array  1 
-    ## 2016-01-05 10:57:33 , processing array  2 
-    ## 2016-01-05 10:57:33 , processing array  3 
-    ## 2016-01-05 10:57:33 , processing array  4 
-    ## 2016-01-05 10:57:33 , processing array  5 
-    ## 2016-01-05 10:57:33 , processing array  6 
-    ## 2016-01-05 10:57:33 , processing array  7 
-    ## 2016-01-05 10:57:33 , processing array  8 
-    ## 2016-01-05 10:57:33 , processing array  9 
-    ## 2016-01-05 10:57:33 , processing array  10 
-    ## 2016-01-05 10:57:34 , processing array  11 
-    ## 2016-01-05 10:57:34 , processing array  12 
+    ## 2016-01-05 11:03:49 , processing array  1 
+    ## 2016-01-05 11:03:49 , processing array  2 
+    ## 2016-01-05 11:03:49 , processing array  3 
+    ## 2016-01-05 11:03:49 , processing array  4 
+    ## 2016-01-05 11:03:50 , processing array  5 
+    ## 2016-01-05 11:03:50 , processing array  6 
+    ## 2016-01-05 11:03:50 , processing array  7 
+    ## 2016-01-05 11:03:50 , processing array  8 
+    ## 2016-01-05 11:03:50 , processing array  9 
+    ## 2016-01-05 11:03:50 , processing array  10 
+    ## 2016-01-05 11:03:50 , processing array  11 
+    ## 2016-01-05 11:03:50 , processing array  12 
     ## Perform Quality Control assessment of the LumiBatch object ...
 
 PLOTS OF NORMALIZED DATA
