@@ -51,7 +51,7 @@ experimentData <- new("MIAME", name="Sean Hughes", lab = "Florian Hladik Lab",
 annotatedData <- new("LumiBatch", exprs=exprs(rawData), phenoData = adf,
                   experimentData = experimentData,
                   se.exprs = se.exprs(rawData),
-                  detection = detection(rawData))
+                  detection = detection(rawData), featureData = featureData(rawData))
 
 ```
 
@@ -213,6 +213,39 @@ ggplot(d, aes(x, y)) + geom_point(aes(size = size)) +
       text = element_blank()) + 
    scale_size(guide = FALSE)
 
+```
+
+Some probes of interest from MTN-007. 
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+get_df <- function(genes) {
+   f <- fData(expressedProbes.lumi)
+   f[f$TargetID %in% genes, c("ProbeID", "TargetID")]
+}
+
+probes <- get_df(c("IL10", "PNPT1", "PAK2", "TRIM5", "DSP",
+   "NFAT5", "TGFBRAP", "CCL19", "CCL21", "SPINK4", "CD7", 
+   "CCR7", "CCL23", "CXCL9", "MMP12"))
+
+d <- exprs(expressedProbes.lumi)
+selected <- d[rownames(d) %in% probes$ProbeID, ]
+
+selected <- reshape2::melt(selected)
+names(selected) <- c("ProbeID", "Variable", "Log2Expression")
+selected <- tidyr::separate(selected, "Variable", 
+   c("Donor", "Concentration"), "-")
+
+selected$Concentration <- stringr::str_replace(
+   selected$Concentration, "_micromolar", ""
+   )
+
+selected <- merge(selected, probes)
+
+library(ggplot2)
+ggplot(selected, aes(x = Concentration, y = Log2Expression, color = Donor)) + 
+   geom_point() + 
+   facet_wrap(~TargetID, scales = "free") + 
+   geom_line(aes(group = interaction(ProbeID, Donor)))
 ```
 
 SessionInfo()
