@@ -4,17 +4,17 @@
 SOME PLOTS OF NON NORMALIZED DATA: density plot, cdf plot ![](highest-concentration-analysis_files/figure-markdown_github/unnamed-chunk-3-1.png) ![](highest-concentration-analysis_files/figure-markdown_github/unnamed-chunk-3-2.png) ![](highest-concentration-analysis_files/figure-markdown_github/unnamed-chunk-3-3.png) ![](highest-concentration-analysis_files/figure-markdown_github/unnamed-chunk-3-4.png)
 
     ## Perform vst transformation ...
-    ## 2016-01-13 17:03:53 , processing array  1 
-    ## 2016-01-13 17:03:53 , processing array  2 
-    ## 2016-01-13 17:03:53 , processing array  3 
-    ## 2016-01-13 17:03:53 , processing array  4 
-    ## 2016-01-13 17:03:53 , processing array  5 
+    ## 2016-01-13 17:09:37 , processing array  1 
+    ## 2016-01-13 17:09:37 , processing array  2 
+    ## 2016-01-13 17:09:37 , processing array  3 
+    ## 2016-01-13 17:09:37 , processing array  4 
+    ## 2016-01-13 17:09:37 , processing array  5 
     ## Perform rsn normalization ...
-    ## 2016-01-13 17:03:53 , processing array  1 
-    ## 2016-01-13 17:03:54 , processing array  2 
-    ## 2016-01-13 17:03:54 , processing array  3 
-    ## 2016-01-13 17:03:54 , processing array  4 
-    ## 2016-01-13 17:03:54 , processing array  5 
+    ## 2016-01-13 17:09:38 , processing array  1 
+    ## 2016-01-13 17:09:38 , processing array  2 
+    ## 2016-01-13 17:09:38 , processing array  3 
+    ## 2016-01-13 17:09:38 , processing array  4 
+    ## 2016-01-13 17:09:38 , processing array  5 
     ## Perform Quality Control assessment of the LumiBatch object ...
 
 PLOTS OF NORMALIZED DATA
