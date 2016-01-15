@@ -218,16 +218,20 @@ ggplot(d, aes(x, y)) + geom_point(aes(size = size)) +
 Some probes of interest from MTN-007. 
 
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
+data <- QNTB.complete.RAW.lumi
+
 get_df <- function(genes) {
-   f <- fData(expressedProbes.lumi)
-   f[f$TargetID %in% genes, c("ProbeID", "TargetID")]
+   f <- fData(data)
+   f[f$TargetID %in% names(genes) | f$ENTREZ_GENE_ID %in% genes, 
+      c("ProbeID", "TargetID")]
 }
 
-probes <- get_df(c("IL10", "PNPT1", "PAK2", "TRIM5", "DSP",
-   "NFAT5", "TGFBRAP", "CCL19", "CCL21", "SPINK4", "CD7", 
-   "CCR7", "CCL23", "CXCL9", "MMP12"))
+probes <- get_df(c("IL10" = 3586, "PNPT1" = 87178, "PAK2" = 5062, 
+   "TRIM5" = 85363, "DSP" = 1832,  "NFAT5" = 10725, "TGFBRAP1" = 9606,
+   "CCL19" = 6363, "CCL21" = 6366, "SPINK4" = 27290, "CD7" = 924, 
+   "CCR7" = 1236, "CCL23" = 6368, "CXCL9" = 4283, "MMP12" = 4321))
 
-d <- exprs(expressedProbes.lumi)
+d <- exprs(data)
 selected <- d[rownames(d) %in% probes$ProbeID, ]
 
 selected <- reshape2::melt(selected)
@@ -242,10 +246,12 @@ selected$Concentration <- stringr::str_replace(
 selected <- merge(selected, probes)
 
 library(ggplot2)
-ggplot(selected, aes(x = Concentration, y = Log2Expression, color = Donor)) + 
+ggplot(selected, aes(x = Concentration, y = Log2Expression, 
+      color = Donor)) + 
    geom_point() + 
    facet_wrap(~TargetID, scales = "free") + 
-   geom_line(aes(group = interaction(ProbeID, Donor)))
+   geom_line(aes(group = interaction(ProbeID, Donor))) + 
+   geom_hline(yintercept = 7.9)
 ```
 
 SessionInfo()
