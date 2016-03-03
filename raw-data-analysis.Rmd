@@ -51,7 +51,9 @@ experimentData <- new("MIAME", name="Sean Hughes", lab = "Florian Hladik Lab",
 annotatedData <- new("LumiBatch", exprs=exprs(rawData), phenoData = adf,
                   experimentData = experimentData,
                   se.exprs = se.exprs(rawData),
-                  detection = detection(rawData), featureData = featureData(rawData))
+                  detection = detection(rawData), 
+                  featureData = featureData(rawData), 
+                  controlData = controlData(rawData))
 
 ```
 
@@ -75,7 +77,7 @@ boxplot(annotatedData)
 #the data we got from the core had no background correction so I will do it here
 
 QNTB.complete.RAW.lumi <- annotatedData %>% 
-   lumiB() %>% 
+   lumiB(method = "bgAdjust") %>% 
    lumiT() %>% 
    lumiN(method = "rsn") %>% 
    lumiQ(detectionTh = 0.05)
